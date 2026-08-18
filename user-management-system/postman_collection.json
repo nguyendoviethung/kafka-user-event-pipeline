@@ -1,0 +1,322 @@
+{
+  "info": {
+    "name": "User Management System - Server A + Server B",
+    "description": "Test CRUD Server A (8085) va thong ke Server B (8086) qua Kafka async event",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrlA", "value": "http://localhost:8085" },
+    { "key": "baseUrlB", "value": "http://localhost:8086" },
+    { "key": "orgId", "value": "" },
+    { "key": "roleId", "value": "" },
+    { "key": "deptId", "value": "" },
+    { "key": "userId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "A. Organization",
+      "item": [
+        {
+          "name": "ORG-01 Create Organization (success)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201', () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.collectionVariables.set('orgId', json.id);",
+            "pm.test('Has id', () => pm.expect(json.id).to.exist);"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Cong ty ABC\",\n  \"description\": \"Tru so chinh\"\n}" },
+            "url": "{{baseUrlA}}/api/organizations"
+          }
+        },
+        {
+          "name": "ORG-02 Create Organization (duplicate -> 409)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 409', () => pm.response.to.have.status(409));"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Cong ty ABC\",\n  \"description\": \"Trung ten\"\n}" },
+            "url": "{{baseUrlA}}/api/organizations"
+          }
+        },
+        {
+          "name": "ORG-03 Create Organization (missing name -> 400)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 400', () => pm.response.to.have.status(400));"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Thieu name\"\n}" },
+            "url": "{{baseUrlA}}/api/organizations"
+          }
+        },
+        {
+          "name": "ORG-04 Get All Organizations",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}],
+          "request": { "method": "GET", "url": "{{baseUrlA}}/api/organizations" }
+        },
+        {
+          "name": "ORG-05 Get Organization By Id",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}],
+          "request": { "method": "GET", "url": "{{baseUrlA}}/api/organizations/{{orgId}}" }
+        },
+        {
+          "name": "ORG-06 Get Organization Not Found -> 404",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 404', () => pm.response.to.have.status(404));"
+          ]}}],
+          "request": { "method": "GET", "url": "{{baseUrlA}}/api/organizations/999999" }
+        },
+        {
+          "name": "ORG-07 Update Organization",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Cong ty ABC Updated\",\n  \"description\": \"Da cap nhat\"\n}" },
+            "url": "{{baseUrlA}}/api/organizations/{{orgId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "B. Role",
+      "item": [
+        {
+          "name": "ROLE-01 Create Role (success)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201', () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.collectionVariables.set('roleId', json.id);"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"ADMIN\",\n  \"description\": \"Quan tri he thong\"\n}" },
+            "url": "{{baseUrlA}}/api/roles"
+          }
+        },
+        {
+          "name": "ROLE-02 Create Role (duplicate -> 409)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 409', () => pm.response.to.have.status(409));"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"ADMIN\",\n  \"description\": \"Trung\"\n}" },
+            "url": "{{baseUrlA}}/api/roles"
+          }
+        },
+        {
+          "name": "ROLE-04 Get All Roles",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}],
+          "request": { "method": "GET", "url": "{{baseUrlA}}/api/roles" }
+        }
+      ]
+    },
+    {
+      "name": "C. Department",
+      "item": [
+        {
+          "name": "DEPT-01 Create Department (success)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201', () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.collectionVariables.set('deptId', json.id);"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Phong IT\",\n  \"description\": \"Phong ky thuat\",\n  \"organizationId\": {{orgId}}\n}" },
+            "url": "{{baseUrlA}}/api/departments"
+          }
+        },
+        {
+          "name": "DEPT-02 Create Department (invalid organizationId -> 404)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 404', () => pm.response.to.have.status(404));"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Phong X\",\n  \"organizationId\": 999999\n}" },
+            "url": "{{baseUrlA}}/api/departments"
+          }
+        },
+        {
+          "name": "DEPT-04 Get All Departments",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}],
+          "request": { "method": "GET", "url": "{{baseUrlA}}/api/departments" }
+        }
+      ]
+    },
+    {
+      "name": "D. User (co publish Kafka event)",
+      "item": [
+        {
+          "name": "USER-01 Create User (success -> publish USER_CREATED)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201', () => pm.response.to.have.status(201));",
+            "const json = pm.response.json();",
+            "pm.collectionVariables.set('userId', json.id);",
+            "pm.test('Status la ACTIVE', () => pm.expect(json.status).to.eql('ACTIVE'));"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"hung\",\n  \"email\": \"hung@gmail.com\",\n  \"fullName\": \"Nguyen Van Hung\",\n  \"roleId\": {{roleId}},\n  \"departmentId\": {{deptId}}\n}" },
+            "url": "{{baseUrlA}}/api/users"
+          }
+        },
+        {
+          "name": "USER-02 Create User (duplicate username -> 409)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 409', () => pm.response.to.have.status(409));"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"hung\",\n  \"email\": \"khac@gmail.com\",\n  \"fullName\": \"Trung username\",\n  \"roleId\": {{roleId}},\n  \"departmentId\": {{deptId}}\n}" },
+            "url": "{{baseUrlA}}/api/users"
+          }
+        },
+        {
+          "name": "USER-03 Create User (duplicate email -> 409)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 409', () => pm.response.to.have.status(409));"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"hung2\",\n  \"email\": \"hung@gmail.com\",\n  \"fullName\": \"Trung email\",\n  \"roleId\": {{roleId}},\n  \"departmentId\": {{deptId}}\n}" },
+            "url": "{{baseUrlA}}/api/users"
+          }
+        },
+        {
+          "name": "USER-04 Create User (invalid roleId -> 404)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 404', () => pm.response.to.have.status(404));"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"hung3\",\n  \"email\": \"hung3@gmail.com\",\n  \"fullName\": \"Role sai\",\n  \"roleId\": 999999,\n  \"departmentId\": {{deptId}}\n}" },
+            "url": "{{baseUrlA}}/api/users"
+          }
+        },
+        {
+          "name": "USER-06 Create User (missing email -> 400)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 400', () => pm.response.to.have.status(400));"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"hung4\",\n  \"fullName\": \"Thieu email\",\n  \"roleId\": {{roleId}},\n  \"departmentId\": {{deptId}}\n}" },
+            "url": "{{baseUrlA}}/api/users"
+          }
+        },
+        {
+          "name": "USER-07 Create User (invalid email format -> 400)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 400', () => pm.response.to.have.status(400));"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"hung5\",\n  \"email\": \"khong-phai-email\",\n  \"fullName\": \"Sai dinh dang\",\n  \"roleId\": {{roleId}},\n  \"departmentId\": {{deptId}}\n}" },
+            "url": "{{baseUrlA}}/api/users"
+          }
+        },
+        {
+          "name": "USER-08 Get All Users",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}],
+          "request": { "method": "GET", "url": "{{baseUrlA}}/api/users" }
+        },
+        {
+          "name": "USER-09 Get User By Id",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}],
+          "request": { "method": "GET", "url": "{{baseUrlA}}/api/users/{{userId}}" }
+        },
+        {
+          "name": "USER-10 Get User Not Found -> 404",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 404', () => pm.response.to.have.status(404));"
+          ]}}],
+          "request": { "method": "GET", "url": "{{baseUrlA}}/api/users/999999" }
+        },
+        {
+          "name": "USER-11 Update User (-> publish USER_UPDATED)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "const json = pm.response.json();",
+            "pm.test('fullName da doi', () => pm.expect(json.fullName).to.eql('Nguyen Van Hung Updated'));"
+          ]}}],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"hung\",\n  \"email\": \"hung.new@gmail.com\",\n  \"fullName\": \"Nguyen Van Hung Updated\",\n  \"roleId\": {{roleId}},\n  \"departmentId\": {{deptId}}\n}" },
+            "url": "{{baseUrlA}}/api/users/{{userId}}"
+          }
+        },
+        {
+          "name": "USER-13 Delete User (soft-delete -> publish USER_DELETED)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 204', () => pm.response.to.have.status(204));"
+          ]}}],
+          "request": { "method": "DELETE", "url": "{{baseUrlA}}/api/users/{{userId}}" }
+        },
+        {
+          "name": "USER-13b Verify User status = DELETED after soft-delete",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "const json = pm.response.json();",
+            "pm.test('status la DELETED', () => pm.expect(json.status).to.eql('DELETED'));"
+          ]}}],
+          "request": { "method": "GET", "url": "{{baseUrlA}}/api/users/{{userId}}" }
+        }
+      ]
+    },
+    {
+      "name": "E. Server B - Verify Async Kafka Processing",
+      "item": [
+        {
+          "name": "ASYNC-04 Get Statistics (Server B)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "console.log('Thong ke event theo loai:', pm.response.json());"
+          ]}}],
+          "request": { "method": "GET", "url": "{{baseUrlB}}/api/statistics" }
+        },
+        {
+          "name": "ASYNC-05 Get Event Log Counts (Server B)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "console.log('So luong log da ghi:', pm.response.json());"
+          ]}}],
+          "request": { "method": "GET", "url": "{{baseUrlB}}/api/statistics/logs/count" }
+        }
+      ]
+    }
+  ]
+}
