@@ -1,0 +1,40 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: server-b
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/server_b_db
+    username: postgres
+    password: 2107
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: server-b-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.example.serverb.event"
+        spring.json.value.default.type: com.example.serverb.event.UserEvent
+        spring.json.use.type.headers: false
+    listener:
+      ack-mode: manual_immediate
+    topics:
+      user-events: user-events
+
+logging:
+  level:
+    com.example.serverb: DEBUG

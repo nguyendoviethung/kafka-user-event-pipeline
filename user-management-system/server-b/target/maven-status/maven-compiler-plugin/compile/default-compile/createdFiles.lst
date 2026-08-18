@@ -1,0 +1,14 @@
+com\example\serverb\service\StatisticsService.class
+com\example\serverb\kafka\UserEventConsumer$1.class
+com\example\serverb\kafka\UserEventConsumer.class
+com\example\serverb\service\LoggingService.class
+com\example\serverb\repository\EventLogRepository.class
+com\example\serverb\service\NotificationService.class
+com\example\serverb\event\UserEvent$UserEventBuilder.class
+com\example\serverb\config\KafkaConsumerConfig.class
+com\example\serverb\controller\StatisticsController.class
+com\example\serverb\entity\EventLog.class
+com\example\serverb\event\EventType.class
+com\example\serverb\entity\EventLog$EventLogBuilder.class
+com\example\serverb\ServerBApplication.class
+com\example\serverb\event\UserEvent.class

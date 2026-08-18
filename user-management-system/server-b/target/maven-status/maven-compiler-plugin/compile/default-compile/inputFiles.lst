@@ -1,0 +1,11 @@
+C:\Users\Dell\Downloads\user-management-system (1)\user-management-system\server-b\src\main\java\com\example\serverb\config\KafkaConsumerConfig.java
+C:\Users\Dell\Downloads\user-management-system (1)\user-management-system\server-b\src\main\java\com\example\serverb\controller\StatisticsController.java
+C:\Users\Dell\Downloads\user-management-system (1)\user-management-system\server-b\src\main\java\com\example\serverb\entity\EventLog.java
+C:\Users\Dell\Downloads\user-management-system (1)\user-management-system\server-b\src\main\java\com\example\serverb\event\EventType.java
+C:\Users\Dell\Downloads\user-management-system (1)\user-management-system\server-b\src\main\java\com\example\serverb\event\UserEvent.java
+C:\Users\Dell\Downloads\user-management-system (1)\user-management-system\server-b\src\main\java\com\example\serverb\kafka\UserEventConsumer.java
+C:\Users\Dell\Downloads\user-management-system (1)\user-management-system\server-b\src\main\java\com\example\serverb\repository\EventLogRepository.java
+C:\Users\Dell\Downloads\user-management-system (1)\user-management-system\server-b\src\main\java\com\example\serverb\ServerBApplication.java
+C:\Users\Dell\Downloads\user-management-system (1)\user-management-system\server-b\src\main\java\com\example\serverb\service\LoggingService.java
+C:\Users\Dell\Downloads\user-management-system (1)\user-management-system\server-b\src\main\java\com\example\serverb\service\NotificationService.java
+C:\Users\Dell\Downloads\user-management-system (1)\user-management-system\server-b\src\main\java\com\example\serverb\service\StatisticsService.java
